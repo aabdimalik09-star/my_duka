@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div class="container">
-        <p> this is the sales page</p>
+{% extends 'base.html' %}
+{% block tittle %} sales {% endblock %}
+{% block content %}
 
-    </div>
-</body>
-</html>
+<div>
+    <p>This is The sales page</p>
+    <p>any other sales related content</p>
+    <p>my sales goes here</p>
+</div>
+
+{% endblock %}
