@@ -1,11 +1,33 @@
-{% extends 'base.html' %}
-{% block tittle %} sales {% endblock %}
+{% extends "base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
 {% block content %}
-
-<div>
-    <p>This is The dashboard page</p>
-    <p>any other dashboard related content</p>
-    <p>my dashboard goes here</p>
+<h2 class="mb-4">Business Dashboard</h2>
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow">
+            <div class="card-body">
+                <h5>Total Sales</h5>
+                <p class="display-6">Ksh 45,000</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <h5>Inventory Count</h5>
+                <p class="display-6">120 Items</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark shadow">
+            <div class="card-body">
+                <h5>New Orders</h5>
+                <p class="display-6">8</p>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}
