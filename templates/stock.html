@@ -1,55 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %} Stock Management {% endblock %}
+{% block title %} Inventory Management {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold">Current Stock Levels</h2>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addStockModal">
-                + Add New Stock
-            </button>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Category</th>
-                            <th>In Stock</th>
-                            <th>Buying Price</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Blue Band (500g)</strong></td>
-                            <td>Groceries</td>
-                            <td><span class="badge bg-primary">45 Units</span></td>
-                            <td>Ksh 320</td>
-                            <td><span class="badge bg-success">In Stock</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary border-0">Edit</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Sugar (1kg)</strong></td>
-                            <td>Essentials</td>
-                            <td><span class="badge bg-danger">5 Units</span></td>
-                            <td>Ksh 150</td>
-                            <td><span class="badge bg-warning text-dark">Low Stock</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary border-0">Edit</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<div class="container mt-4">
+    <h2>Stock Inventory</h2>
+    
+    <table id="example" class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product ID (PID)</th>
+                <th>Stock Quantity</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in stock %}
+            <tr>
+                <td>{{ item[0] }}</td>
+                <td>{{ item[1] }}</td>
+                <td>{{ item[2] }}</td>
+                <td>{{ item[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

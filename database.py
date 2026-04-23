@@ -1,79 +1,47 @@
 import psycopg2
 
-#eastablish connection to postgres
-conn = psycopg2.connect(host='localhost',port='5432',user='postgres',password='1956',dbname='myduka')
+def get_db_connection():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="myduka",
+        user="postgres",
+        password="1956" # Use your actual psql password
+    )
+    return conn
 
-#object for db operations
-cur = conn.cursor()
-
-cur.execute("select * from products")
-products = cur.fetchall()
-print(products)
-
-cur.execute("select * from sales")
-sales = cur.fetchall()
-print(sales)
-
-cur.execute("insert into products(name,buying_price,selling_price)values('laptop',50000,60000)")
-conn.commit()
-
-print(products)
-
-#fetching products
 def get_products():
-    cur.execute('select * from products')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM products;')
     products = cur.fetchall()
+    cur.close()
+    conn.close()
     return products
 
-products_data = get_products()
-print(products_data)
-
-#fetching sales
 def get_sales():
-    cur.execute('select * from sales')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, pid, quantity, created_at FROM sales;')
     sales = cur.fetchall()
+    cur.close()
+    conn.close()
     return sales
 
-sales_data = get_sales()
-print(sales_data)
-
-# define the following functions : insert_sales(),insert_stock(),insert_users() 
-# and use them to insert sales, stock and users respectively
-
-def insert_sales(sale_details):
-    cur.execute("insert into sales(pid,quantity)values(%s,%s)",(sale_details))
-    conn.commit()
-
-sale1 = (4,20)
-sale2 = (5,40)
-insert_sales(sale1)
-insert_sales(sale2)
-
-sales_data = get_sales()
-print(sales_data)
-
-def insert_stock(stock_details):
-    cur.execute("insert into stock(pid,stock_quantity)values(%s,%s)",(stock_details))
-    conn.commit()
+def get_stock():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, pid, stock_quantity, created_at FROM stock;')
+    stock = cur.fetchall()
+    cur.close()
+    conn.close()
+    return stock
 
 
-stock1 = (7,50)
-stock2 = (8,25)
-
-insert_stock(stock1)
-insert_stock(stock2)
 
 
-def insert_users(user_details):
-    # CORRECT: string ends, then a comma, then the variable
-    cur.execute("insert into users(username, password) values(%s, %s)", user_details)
-    conn.commit()
 
-user1 = ('admin', '1234')
-user2 = ('cashier', 'pass123')
 
-insert_users(user1)
-insert_users(user2)
+
 
 # write sql queries to fetch the following data
 

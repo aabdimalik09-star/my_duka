@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from database import get_products, get_sales, get_stock
 
 # CREATING A FLASK INSTANCE
 app = Flask(__name__)
@@ -12,17 +13,20 @@ def home():#view function
 #http://127.0.0.1:5000/products
 @app.route('/products')
 def products():
-    return render_template('products.html')
+    products_data = get_products()
+    return render_template('products.html',products = products_data)
 
 
 @app.route('/sales')
 def sales():
-    return render_template('sales.html')
+    sales_data = get_sales()
+    return render_template('sales.html',sales = sales_data)
 
 
 @app.route('/stock')
 def stock():
-    return render_template('stock.html')
+    stock_data = get_stock()
+    return render_template('stock.html',stock = stock_data)
 
 
 @app.route('/dashboard')
