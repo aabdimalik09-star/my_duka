@@ -1,100 +1,87 @@
 import psycopg2
 
-def get_db_connection():
-    conn = psycopg2.connect(
-        host="localhost",
-        database="myduka",
-        user="postgres",
-        password="1956" # Use your actual psql password
-    )
-    return conn
+#establishing connection to Postgres
+conn = psycopg2.connect(host='localhost',port=5432,user='postgres',password='1956',dbname='myduka')
 
+#object to perform db operations
+cur = conn.cursor()
+
+#fetching products
 def get_products():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM products;')
+    cur.execute("select * from products")
     products = cur.fetchall()
-    cur.close()
-    conn.close()
     return products
 
+
+#fetching sales
 def get_sales():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, pid, quantity, created_at FROM sales;')
+    cur.execute("select * from sales")
     sales = cur.fetchall()
-    cur.close()
-    conn.close()
     return sales
 
+
+#fetching stock
 def get_stock():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, pid, stock_quantity, created_at FROM stock;')
+    cur.execute("select * from stock")
     stock = cur.fetchall()
-    cur.close()
-    conn.close()
     return stock
 
 
+def get_data(table):
+    cur.execute(f"select * from {table}")
+    data = cur.fetchall()
+    return data
+
+
+def insert_products(products_details):
+    cur.execute(f"insert into products(name,buying_price,selling_price)values{products_details}")
+    conn.commit()
+
+products1 = ('milk',50,60)
+insert_products(products1)
 
 
 
+def insert_stock(stock_details):
+    cur.execute("insert into stock(pid,stock_quantity)values(%s,%s)",(stock_details))
+    conn.commit()
 
+def insert_sales(sales_details):
+    cur.execute("insert into sales(pid, quantity, created_at) values (%s, %s, %s)", sales_details)
+    conn.commit()   
 
-
-# write sql queries to fetch the following data
 
 def sales_per_product():
     cur.execute('''
-        SELECT products.name, SUM(sales.quantity)
-        AS total_sold
-        FROM products
-        JOIN sales ON products.id = sales.product_id
-        GROUP BY products.name;
+                select products.name as p_name , sum(quantity * selling_price) as total_sales 
+                from sales join products on products.id = sales.pid group by p_name;
     ''')
-    
-    sales_product = cur.fetchall() 
+    sales_product = cur.fetchall()
     return sales_product
 
 
-
-                
 def sales_per_day():
     cur.execute('''
-        SELECT s.created_at::DATE AS sale_date, SUM(p.selling_price * s.quantity)
-        AS daily_sales
-        FROM products p
-        JOIN sales s ON p.id = s.pid
-        GROUP BY sale_date;
+        select date(sales.created_at) as day, (sales.quantity * products.selling_price) as 
+        total_sales from products join sales on sales.pid = products.id group by day;
     ''')
-    
     sales_day = cur.fetchall()
     return sales_day
 
 
 def profit_per_product():
     cur.execute('''
-        SELECT p.name, SUM((p.selling_price - p.buying_price) * s.quantity) 
-        AS total_profit
-        FROM products p
-        JOIN sales s ON p.id = s.pid
-        GROUP BY p.name;
+        select products.name as p_name , sum((selling_price - buying_price) * quantity) as total_profit
+        from sales join products on sales.pid = products.id group by p_name;
     ''')
-    
-    profit_prod = cur.fetchall()
-    return profit_prod
-
+    profit_product = cur.fetchall()
+    return profit_product
 
 
 def profit_per_day():
     cur.execute('''
-        SELECT s.created_at::DATE AS sale_date, 
-        SUM((p.selling_price - p.buying_price) * s.quantity) AS daily_profit
-        FROM products p
-        JOIN sales s ON p.id = s.pid
-        GROUP BY sale_date;
+        select date(sales.created_at) as day, sum((selling_price - buying_price) * quantity) as total_profit
+        from sales join products on sales.pid = products.id group by day;
     ''')
-    
     profit_day = cur.fetchall()
     return profit_day
