@@ -3,8 +3,8 @@
 {% block content %}
 <div>
 
-    
-    
+
+
 
 
 
@@ -24,24 +24,24 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" action="/add_stock" >
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Product ID</label>
-                                <input type="text" name="p_name" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Stock Quantity</label>
-                                <input type="number" name="stock_Quantity" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">time</label>
-                                <input type="number" name="time" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Add stock</button>
-                            </div>
+                        <form method="post" action="/add_stock">
+                            <select class="form-select" name="p_id" aria-label="Default select example">
+                                <option selected>select products</option>
+                                {% for products in products_data%}
+                                <option value="{{ products[0]}}">{{ products[1]}} </option>
+                                {% endfor %}
+
+                                <div class="mb-3">
+                                    <label for="exampleInputPassword1" class="form-label">Stock <q></q>uantity</label>
+                                    <input type="number" name="stock_quantity" class="form-control"
+                                        id="exampleInputPassword1">
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Add stock</button>
+                                </div>
 
                         </form>
                     </div>
@@ -67,9 +67,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Product ID</th>
-                    <th>Stock Quantity</th>
+                    <th>Stock quantity</th>
                     <th>Time</th>
-
                 </tr>
             </thead>
             <tbody>

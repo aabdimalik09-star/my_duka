@@ -1,8 +1,13 @@
-from flask import Flask , render_template,request,redirect,url_for
+from flask import Flask , render_template,request,redirect,url_for,flash
 from database import get_products,get_sales,get_stock,insert_products,insert_stock,insert_sales
+from database import check_user_exists,create_user,get_users
 
 #creating a Flask instance
 app = Flask(__name__)
+
+
+app.secret_key = 'tyuqwiojhdskljdhsaklgggj'
+
 
 # http://127.0.0.1:5000/ - url
 @app.route('/') #decorator function
@@ -25,19 +30,19 @@ def add_products():
         selling_price = request.form['s_price']
         new_products = (product_name,buying_price,selling_price)
         insert_products(new_products)
-        print("Product Added Successfully")
+        flash("Product Added Successfully",'success')
     return redirect(url_for('products'))
 
 
 @app.route('/add_sales',methods=['GET','POST'])
 def add_sales():
     if request.method == 'POST':
-        product_id = request.form['p_id']
+        product_id = request.form['pid']
         quantity = request.form['quantity']
-        created_at = request.form['created_at']
-        new_sales = (product_id,quantity,created_at)
-        insert_sales(new_sale)
-        print("Sales made successfully")
+       
+        new_sales = (product_id,quantity)
+        insert_sales(new_sales)
+        flash("Sales made successfully",'success')
     return redirect(url_for('sales'))
 
 
@@ -46,12 +51,35 @@ def add_sales():
 def add_stock():
     if request.method == 'POST':
         product_id = request.form['p_id']
-        stock_quantity = request.form['s_quantity']
-        Time = request.form['Time']
-        new_stock = (product_id,stock_quantity,Time)
+        stock_quantity = request.form['stock_quantity']
+        new_stock = (product_id,stock_quantity,)
         insert_stock(new_stock)
-        print("Stock added successfully")
+        flash("Stock added successfully"'success')
     return redirect(url_for('stock'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        full_name = request.form['full_name']
+        email = request.form['email']
+        phone = request.form['phone_number']
+        password = request.form['password']
+        
+        if check_user_exists(email):
+            flash("User Already Exists", 'danger')
+        else:
+            create_user(full_name, email, phone, password)
+            flash("User Registered Successfully", 'success')
+            return redirect(url_for('login'))
+            
+    return render_template('register.html')
+
+
+
+
+
+
 
 
 
@@ -63,13 +91,15 @@ def add_stock():
 @app.route('/sales')
 def sales():
     sales_data = get_sales()
-    return render_template("sales.html",sales_data = sales_data)
+    products_data = get_products()
+    return render_template("sales.html",sales_data = sales_data,products_data = products_data)
 
 
 @app.route('/stock')
 def stock():
     stock_data = get_stock()
-    return render_template("stock.html",stock_data = stock_data)
+    products_data = get_products()
+    return render_template("stock.html",stock_data = stock_data,products_data = products_data)
 
 
 @app.route('/dashboard')
@@ -82,9 +112,7 @@ def login():
     return render_template("login.html")
 
 
-@app.route('/register')
-def register():
-    return render_template("register.html")
+
 
 
 # run your application

@@ -47,8 +47,34 @@ def insert_stock(stock_details):
     conn.commit()
 
 def insert_sales(sales_details):
-    cur.execute("insert into sales(pid, quantity, created_at) values (%s, %s, %s)", sales_details)
-    conn.commit()   
+    cur.execute("insert into sales(pid, quantity) values (%s, %s)", sales_details)
+    conn.commit()  
+
+
+
+def get_users():
+    cur.execute("SELECT * FROM users")
+    users = cur.fetchall()
+    return users
+
+def create_user(full_name, email, phone, password):
+    cur.execute("INSERT INTO users (full_name, email, phone_number, password) VALUES (%s, %s, %s, %s)", (full_name, email, phone, password))
+    conn.commit()
+
+def check_user_exists(email):
+    cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
+    return user is not None
+
+
+
+
+
+
+
+
+
+
 
 
 def sales_per_product():
