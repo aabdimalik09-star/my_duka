@@ -1,9 +1,13 @@
 from flask import Flask , render_template,request,redirect,url_for,flash
 from database import get_products,get_sales,get_stock,insert_products,insert_stock,insert_sales
 from database import check_user_exists,create_user,get_users,available_stock
+from flask_bcrypt import Bcrypt
 
 #creating a Flask instance
 app = Flask(__name__)
+
+#bcrypt
+bcrypt = Bcrypt(app)
 
 
 app.secret_key = 'tyuqwiojhdskljdhsaklgggj'
@@ -61,6 +65,32 @@ def add_stock():
     return redirect(url_for('stock'))
 
 
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        existing_user = check_user_exists(email)
+        if not existing_user:
+            flash('User doesn\'t exist, please register','danger')
+        else:
+            if bcrypt.check_password_hash(existing_user[-1],password):
+                flash('Login successful', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Password Incorrect', 'danger')
+
+    return render_template('login.html')
+
+
+
+
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -70,9 +100,10 @@ def register():
         password = request.form['password']
         
         if check_user_exists(email):
+            hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
             flash("User Already Exists", 'danger')
         else:
-            create_user(full_name, email, phone, password)
+            create_user(full_name, email, phone, hashed_password)
             flash("User Registered Successfully", 'success')
             return redirect(url_for('login'))
             
@@ -110,9 +141,6 @@ def dashboard():
     return render_template("dashboard.html")
 
 
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
 
 
