@@ -1,84 +1,113 @@
 {% extends 'base.html' %}
 {% block title %} Products {% endblock %}
 {% block content %}
-<div>
 
-    <p> This is the products page </p>
-    <p>More product content ...</p>
+<style>
+    body { background-color: #f8f9fc; }
+    
+    .main-wrapper {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        margin-top: 2rem;
+    }
 
+    /* Professional Table Headers */
+    .table thead th {
+        background-color: #f8f9fc;
+        color: #4e73df;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.05rem;
+        border-top: none;
+        border-bottom: 2px solid #e3e6f0;
+        padding: 15px;
+    }
 
+    /* Table Row Styling */
+    .table tbody td {
+        padding: 15px;
+        color: #5a5c69;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e6f0;
+    }
 
+    .table tbody tr:hover {
+        background-color: #f8f9fc;
+    }
 
-    <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    /* Column specific styles using raw data */
+    .id-style { font-weight: bold; color: #858796; }
+    .name-style { font-weight: 600; color: #333; }
+    .price-style { font-family: monospace; font-weight: 600; }
+
+    .btn-primary {
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 20px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container main-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Products</h2>
+        <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Add Product
         </button>
+    </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Adding a Product</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="post" action="/add_product" >
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Product Name</label>
-                                <input type="text" name="p_name" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Buying Price</label>
-                                <input type="number" name="b_price" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Selling Price</label>
-                                <input type="number" name="s_price" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Add Product</button>
-                            </div>
-
-                        </form>
-                    </div>
-
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 fw-bold" id="exampleModalLabel">Adding a Product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/add_product" >
+                        <div class="mb-3">
+                            <label for="p_name" class="form-label">Product Name</label>
+                            <input type="text" name="p_name" class="form-control" id="p_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="b_price" class="form-label">Buying Price</label>
+                            <input type="number" name="b_price" class="form-control" id="b_price">
+                        </div>
+                        <div class="mb-3">
+                            <label for="s_price" class="form-label">Selling Price</label>
+                            <input type="number" name="s_price" class="form-control" id="s_price">
+                        </div>
+                        <div class="modal-footer border-0 p-0 mt-3">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
     </div>
 
-
-
-
-
-
-
-
-
-
-    <div>
-        <table id="example" class="table table-striped">
+    <div class="table-responsive">
+        <table id="example" class="table">
             <thead>
                 <tr>
                     <th>Product ID</th>
                     <th>Product Name</th>
                     <th>Buying Price</th>
                     <th>Selling Price</th>
-
                 </tr>
             </thead>
             <tbody>
                 {% for product in products_data %}
                 <tr>
-                    <td> {{ product[0] }}</td>
-                    <td> {{ product[1] }}</td>
-                    <td> {{ product[2] }}</td>
-                    <td> {{ product[3] }}</td>
+                    <td class="id-style"> {{ product[0] }}</td>
+                    <td class="name-style"> {{ product[1] }}</td>
+                    <td class="price-style"> {{ product[2] }}</td>
+                    <td class="price-style text-primary"> {{ product[3] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,6 +1,6 @@
 from flask import Flask , render_template,request,redirect,url_for,flash
 from database import get_products,get_sales,get_stock,insert_products,insert_stock,insert_sales
-from database import check_user_exists,create_user,get_users
+from database import check_user_exists,create_user,get_users,available_stock
 
 #creating a Flask instance
 app = Flask(__name__)
@@ -39,7 +39,10 @@ def add_sales():
     if request.method == 'POST':
         product_id = request.form['pid']
         quantity = request.form['quantity']
-       
+        check_stock = available_stock(product_id)
+    if check_stock < quantity:
+        flash("insufficient stock,can not complete sale", 'danger')
+        return redirect(url_for('sales'))
         new_sales = (product_id,quantity)
         insert_sales(new_sales)
         flash("Sales made successfully",'success')
