@@ -1,8 +1,8 @@
-from flask import Flask , render_template,request,redirect,url_for,flash
+from flask import Flask , render_template,request,redirect,url_for,flash,session
 from database import get_products,get_sales,get_stock,insert_products,insert_stock,insert_sales
 from database import check_user_exists,create_user,get_users,available_stock
 from flask_bcrypt import Bcrypt
-
+from functools import wraps
 #creating a Flask instance
 app = Flask(__name__)
 
@@ -19,8 +19,22 @@ def home():#view function
     return  render_template('index.html')
 
 
+def login_required(f):
+    @wraps(f)
+    def protected(*args, **kwargs):
+        if 'email' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return protected
+
+
+
+
+
+
 # http://127.0.0.1:5000/products
 @app.route('/products')
+@login_required
 def products():
     products_data = get_products()
     return render_template("products.html",products_data = products_data)
@@ -78,6 +92,7 @@ def login():
             flash('User doesn\'t exist, please register','danger')
         else:
             if bcrypt.check_password_hash(existing_user[-1],password):
+                session ['email']= email
                 flash('Login successful', 'success')
                 return redirect(url_for('dashboard'))
             else:
@@ -123,6 +138,7 @@ def register():
 
 
 @app.route('/sales')
+@login_required
 def sales():
     sales_data = get_sales()
     products_data = get_products()
@@ -130,6 +146,7 @@ def sales():
 
 
 @app.route('/stock')
+@login_required
 def stock():
     stock_data = get_stock()
     products_data = get_products()
@@ -137,8 +154,18 @@ def stock():
 
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template("dashboard.html")
+
+
+
+# Logging out by removing email from session
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    flash('User logged out successfully', 'success')
+    return redirect(url_for('login'))
 
 
 
